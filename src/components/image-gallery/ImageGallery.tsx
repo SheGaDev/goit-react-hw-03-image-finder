@@ -1,4 +1,4 @@
-import ImageGalleryItem from './ImageGalleryItem';
+import ImageGalleryItem from '../image-gallery-item/ImageGalleryItem';
 import type { Image } from '../app/App';
 
 const ImageGallery = ({
@@ -17,6 +17,7 @@ const ImageGallery = ({
               <ImageGalleryItem
                 key={image.id}
                 image={image.webformatURL}
+                largeImage={image.largeImageURL}
                 alt={image.tags}
                 selectImage={selectImage}
               />
