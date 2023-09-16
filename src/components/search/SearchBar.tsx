@@ -15,7 +15,9 @@ class SearchBar extends Component<Props> {
 
   onSubmit = (e: FormEvent) => {
     e.preventDefault();
-    this.props.sendQuery(this.state.query);
+    const { query } = this.state;
+    if (query === '') return;
+    this.props.sendQuery(query);
   };
 
   render() {
