@@ -53,32 +53,21 @@ class App extends Component {
   };
 
   sendQuery = (query: string) => {
-    this.setState({ query, page: 1, error: null });
+    this.setState({ query, page: 1, error: null, images: [] });
   };
 
   search = async () => {
     const { page, query } = this.state;
-    if (query === '') {
-      this.setState({
-        total: 0,
-        totalPages: 1,
-        images: [],
-        isLoading: false,
-      });
-      return;
-    }
     try {
       const { totalHits, hits } = await fetchImages({
         page,
         query,
       });
       this.setState((prev: Pick<State, keyof State>): Pick<State, keyof State> => {
-        const totalPages = Math.ceil(totalHits / 12);
-        const totalImages = page === 1 ? [] : prev.images;
         return {
           total: totalHits,
-          totalPages,
-          images: [...totalImages, ...(hits as Image[])],
+          totalPages: Math.ceil(totalHits / 12),
+          images: [...prev.images, ...(hits as Image[])],
         } as State;
       });
     } catch (error) {
@@ -104,15 +93,14 @@ class App extends Component {
     });
   };
 
-  showModal = (e: KeyboardEvent) => {
-    if (e.key === 'Escape')
-      this.setState({
-        modal: {
-          selected: false,
-          webformatURL: '',
-          tags: '',
-        },
-      });
+  closeModal = () => {
+    this.setState({
+      modal: {
+        selected: false,
+        webformatURL: '',
+        tags: '',
+      },
+    });
   };
 
   render() {
@@ -124,7 +112,7 @@ class App extends Component {
         {images.length !== 0 && <ImageGallery images={images} selectImage={this.selectImage} />}
         {isLoading && <Loader />}
         {totalPages !== 0 && page !== totalPages && <Button changePage={this.changePage} />}
-        {modal.selected && <Modal modal={modal} showModal={this.showModal} />}
+        {modal.selected && <Modal modal={modal} closeModal={this.closeModal} />}
       </div>
     );
   }
