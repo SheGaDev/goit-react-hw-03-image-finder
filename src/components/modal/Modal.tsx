@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { Component, MouseEvent } from 'react';
 
 type ModalProp = {
   webformatURL: string;
@@ -6,22 +6,36 @@ type ModalProp = {
 };
 type Props = {
   modal: ModalProp;
-  showModal: (e: KeyboardEvent) => void;
+  closeModal: () => void;
 };
 
 class Modal extends Component<Props> {
   componentDidMount() {
-    document.addEventListener('keydown', this.props.showModal);
+    document.addEventListener('keydown', this.closeKeyboardModal);
   }
 
   componentWillUnmount() {
-    document.removeEventListener('keydown', this.props.showModal);
+    document.removeEventListener('keydown', this.closeKeyboardModal);
   }
+
+  closeOverlayModal = (e: MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      this.props.closeModal();
+    }
+  };
+
+  closeKeyboardModal = (e: KeyboardEvent) => {
+    if (e.key === 'Escape') this.props.closeModal();
+  };
 
   render() {
     return (
-      <div className='fixed left-0 top-0 z-[1200] flex h-[100vh] w-[100vw] items-center justify-center bg-[#00000040]'>
+      <div
+        onClick={this.closeOverlayModal}
+        className='fixed left-0 top-0 z-[1200] flex h-[100vh] w-[100vw] items-center justify-center bg-[#00000040]'
+      >
         <div
+          onClick={(e) => e.stopPropagation()}
           style={{
             maxWidth: 'calc(100vw - 48px)',
             maxHeight: 'calc(100vh - 48px)',
